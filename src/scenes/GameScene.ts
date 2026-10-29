@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { EventBus, GameEvents } from '../core/EventBus';
 import { GameState } from '../core/GameState';
 import { PerformanceMonitor } from '../core/PerformanceMonitor';
+import { detectDevice, getRuntimeDeviceTraits } from '../core/Device';
 import { Player } from '../entities/Player';
 import { Enemy, EnemyConfig } from '../entities/Enemy';
 import { Npc, NpcConfig } from '../entities/Npc';
@@ -58,7 +59,8 @@ export class GameScene extends Phaser.Scene {
 
   create(): void {
     this.ui = this.scene.get(UIScene.KEY) as UIScene;
-    this.degradeEnabled = this.ui.device === 'h5';
+    // UIScene 与 GameScene 同帧启动，避免读取其未初始化状态，直接基于设备特征判定（R-001）
+    this.degradeEnabled = detectDevice(getRuntimeDeviceTraits()) === 'h5';
     this.perf = new PerformanceMonitor(
       () => this.game.loop.actualFps,
       this.degradeEnabled
@@ -240,7 +242,7 @@ export class GameScene extends Phaser.Scene {
       enemy.patrolUpdate(enemy.speed);
       if (enemy.hpBar) {
         enemy.hpBar.setPosition(enemy.x, enemy.y - 26);
-        enemy.hpBar.width = 28 * (enemy.combat.hp / enemy.combat.maxHp);
+        enemy.hpBar.setSize(28 * (enemy.combat.hp / enemy.combat.maxHp), 4);
         if (enemy.hpBarTimer > 0 && time > enemy.hpBarTimer) {
           enemy.hpBar.setVisible(false);
           enemy.hpBarTimer = 0;
@@ -278,7 +280,12 @@ export class GameScene extends Phaser.Scene {
     const dx = this.player.x - enemy.x;
     const dy = this.player.y - enemy.y;
     const dist = Math.hypot(dx, dy) || 1;
-    this.player.setVelocity((dx / dist) * ENEMY_KNOCKBACK_PX * 4, (dy / dist) * ENEMY_KNOCKBACK_PX * 4);
+    // 击退：约 64px（256px/s × 250ms），击退期间输入不覆盖速度（R-004）
+    this.player.knockback(
+      (dx / dist) * ENEMY_KNOCKBACK_PX * 4,
+      (dy / dist) * ENEMY_KNOCKBACK_PX * 4,
+      250
+    );
     if (this.hp <= 0) this.onPlayerDied();
   }
 

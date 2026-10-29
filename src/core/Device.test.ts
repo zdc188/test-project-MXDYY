@@ -15,6 +15,9 @@ describe('设备检测（DES-03）', () => {
   it('移动 UA 无触控上报 → H5', () => {
     expect(detectDevice({ hasTouch: false, isMobileUA: true })).toBe('h5');
   });
+  it('iPadOS 桌面式 UA（Macintosh + 触控）→ H5', () => {
+    expect(detectDevice({ hasTouch: true, isMobileUA: false, isIPadOs: true })).toBe('h5');
+  });
 });
 
 describe('NPC 交互判定（DES-05）', () => {

@@ -24,11 +24,22 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     if (frozen) this.setVelocity(0, 0);
   }
 
-  applyIntent(intent: InputIntent): void {
-    if (this.frozen) {
-      this.setVelocity(0, 0);
-      return;
+  private knockbackUntil = 0;
+
+      /** 击退：短时间内由击退速度接管，避免被下一帧输入覆盖（DES-06）。 */
+      knockback(vx: number, vy: number, durationMs: number): void {
+    this.knockbackUntil = this.scene.time.now + durationMs;
+      this.setVelocity(vx, vy);
     }
+
+    private isKnockbackActive(): boolean {
+      return this.scene.time.now < this.knockbackUntil;
+    }
+
+    applyIntent(intent: InputIntent): void {
+      if (this.frozen || this.isKnockbackActive()) {
+        return;
+      }
     const len = Math.hypot(intent.moveX, intent.moveY);
     if (len > 0) {
       this.setVelocity(

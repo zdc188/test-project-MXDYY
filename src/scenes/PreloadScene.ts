@@ -37,7 +37,7 @@ export class PreloadScene extends Phaser.Scene {
       this.timeoutTimer?.remove();
       if (this.timedOut) return;
       if (this.failedKeys.length > 0) {
-        this.showRetry('资源加载失败');
+        this.showRetry('资源加载失败', this.failedKeys.length);
       } else {
         this.enterGame();
       }
@@ -55,19 +55,21 @@ export class PreloadScene extends Phaser.Scene {
       if (this.finished) return;
       this.timedOut = true;
       this.load.reset();
-      this.showRetry('资源加载超时');
+      this.showRetry('资源加载超时', this.failedKeys.length);
     });
   }
 
   /** 重试：重新加载资源包，已成功的资源自动跳过，仅失败项重载。 */
-  private showRetry(message: string): void {
+  private showRetry(message: string, failedCount: number): void {
     this.timeoutTimer?.remove();
-    const failed = [...this.failedKeys];
-    this.loadingUI.showRetry(`${message}（${failed.length || '?'} 项资源）`, () => {
+    this.loadingUI.showRetry(
+    failedCount > 0 ? `${message}（${failedCount} 项资源）` : message,
+      () => {
       this.timedOut = false;
-      this.beginLoad();
-    });
+    this.beginLoad();
   }
+      );
+    }
 
   private enterGame(): void {
     this.finished = true;

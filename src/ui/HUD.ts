@@ -63,9 +63,10 @@ export class HUD {
 
   private setHp(hp: number): void {
     const ratio = Phaser.Math.Clamp(hp / PLAYER_MAX_HP, 0, 1);
-    this.hpBar.width = 160 * ratio;
-    this.hpText.setText(`HP ${Math.max(0, Math.round(hp))}/${PLAYER_MAX_HP}`);
-  }
+    // Shape 几何需 setSize 更新，直接赋 width 不生效（R-002）
+    this.hpBar.setSize(160 * ratio, 12);
+  this.hpText.setText(`HP ${Math.max(0, Math.round(hp))}/${PLAYER_MAX_HP}`);
+    }
 
   destroy(): void {
     this.scene.scale.off(Phaser.Scale.Events.RESIZE, this.reposition, this);

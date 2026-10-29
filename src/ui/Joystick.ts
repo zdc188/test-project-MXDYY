@@ -49,7 +49,7 @@ export class Joystick {
       this.updateKnob(p.x, p.y);
     });
     this.scene.input.on('pointermove', (p: Phaser.Input.Pointer) => {
-      if (this.dragging && p.isDown) {
+      if (this.dragging && p.isDown && p.id === this.touchId) {
         this.updateKnob(p.x, p.y);
       }
     });

@@ -25,9 +25,10 @@ export class LoadingUI {
 
   setProgress(progress: number): void {
     const p = Phaser.Math.Clamp(progress, 0, 1);
-    this.bar.width = 414 * p;
-    this.text.setText(`加载中 ${Math.floor(p * 100)}%`);
-  }
+    // Shape 几何需 setSize 更新，直接赋 width 不生效（R-002）
+    this.bar.setSize(414 * p, 18);
+  this.text.setText(`加载中 ${Math.floor(p * 100)}%`);
+    }
 
   showRetry(message: string, onRetry: () => void): void {
     if (this.retryOverlay) return;
