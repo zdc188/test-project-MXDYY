@@ -1,0 +1,8 @@
+{
+  "targetFps": 30,
+  "sampleIntervalMs": 500,
+  "windowSamples": 10,
+  "l1": { "avgFpsBelow": 25, "consecutiveWindows": 2 },
+  "l2": { "avgFpsBelow": 20, "consecutiveWindows": 2, "renderScale": 0.5 },
+  "memory": { "maxUsedJsHeapBytes": 314572800 }
+}

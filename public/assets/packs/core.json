@@ -1,0 +1,15 @@
+{
+  "core": {
+    "files": [
+      { "type": "image", "key": "player", "url": "../sprites/player.png" },
+      { "type": "image", "key": "enemy", "url": "../sprites/enemy.png" },
+      { "type": "image", "key": "npc", "url": "../sprites/npc.png" },
+      { "type": "image", "key": "tileset", "url": "../sprites/tileset.png" },
+      {
+        "type": "tilemapTiledJSON",
+        "key": "map",
+        "url": "../tilemaps/map.json"
+      }
+    ]
+  }
+}
